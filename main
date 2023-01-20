@@ -8,226 +8,241 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // 2022-09-20 (Details in the code below, simple scripts for SAVE and CLEAR buttons, and multiple selections) //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
+const active_worksheet = SpreadsheetApp.getActiveSheet();
+const _sheet = (name) => active_worksheet.getSheetByName(name);
 
 // THIS CUSTOM BUTTON FUNCTION CREATES A NEW ROW IN "MY PROMPTS" THEN COPIES THE CURRENT PROMPT TO IT WITH DATE AND TIME
 function SaveMyPrompt() {
-  var inputRange = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Prompter").getRange("B33");
-  var inputValue = inputRange.getValue();
-  var last = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("MyPrompts").getLastRow();
-  var outputRange = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("MyPrompts").getRange(last+1,2,1,2);
-  outputRange.setValues([[Utilities.formatDate(new Date(), Session.getTimeZone(), 'yyyy-MM-dd HH:mm'),inputValue]]); 
+    const my_prompts = _sheet("Prompter");
+    var inputRange = my_prompts.getRange("B33");
+    var inputValue = inputRange.getValue();
+    var last = my_prompts.getLastRow();
+    var outputRange = my_prompts.getRange(last + 1, 2, 1, 2);
+    outputRange.setValues([[Utilities.formatDate(new Date(), Session.getTimeZone(), 'yyyy-MM-dd HH:mm'), inputValue]]);
 }
 
 
+const clear_prompt_alternate = () => {
+    const sheet = SpreadsheetApp.getActiveSheet();
+    const cells_to_clear = 'B5,AH5,B8,I8,B9,I9,B10,I10,L8,AH8,L9,AH9,L10,AH10,B13,B14,B15,B17,L13,L14,L15,L16,L17,B20,C21,I20,J21,P20,Q21,T22,W20,X21,AA22,AD20,AE21,AH22,B25,C26,F27,I25,J26,M27,P25,Q26,T27,W25,X26,AA27,AD25,AE26,AH27'.split(',');
+    const cells_set_to_false = 'Z13,Z14,Z15,Z16,Z17'.split(',');
+
+    cells_to_clear.map(addr => sheet.getRange(addr).clearContent());
+    cells_set_to_false.map(addr = sheet.getRange(addr).setValue('FALSE'));
+    sheet.getRange('B30').setValue('No Preference'); // DEPTH OF FIELD
+    sheet.getRange('W30').setValue('10'); // TEXT WEIGHT
+    sheet.getRange('AX12').setValue('No Clusters'); // CLUSTER
+}
 
 // THIS CUSTOM BUTTON FUNCTION SIMPLY CLEARS ALL THE INPUT FIELDS SO YOU CAN START EMPTY
-function ClearPrompter() {
- var sheet = SpreadsheetApp.getActiveSheet();
- SpreadsheetApp.getActiveSheet().getRange('B5').setValue(''); // MAIN IDEA
- SpreadsheetApp.getActiveSheet().getRange('AH5').setValue(''); // MAIN IDEA WEIGHT
- SpreadsheetApp.getActiveSheet().getRange('B8').setValue(''); // SUBJECTS 1
- SpreadsheetApp.getActiveSheet().getRange('I8').setValue(''); // SUBJECTS 1 WEIGHT
- SpreadsheetApp.getActiveSheet().getRange('B9').setValue(''); // SUBJECTS 2
- SpreadsheetApp.getActiveSheet().getRange('I9').setValue(''); // SUBJECTS 2 WEIGHT
- SpreadsheetApp.getActiveSheet().getRange('B10').setValue(''); // SUBJECTS 3
- SpreadsheetApp.getActiveSheet().getRange('I10').setValue(''); // SUBJECTS 3 WEIGHT
- SpreadsheetApp.getActiveSheet().getRange('L8').setValue(''); // IMAGE URL 1
- SpreadsheetApp.getActiveSheet().getRange('AH8').setValue(''); // IMAGE 1 WEIGHT
- SpreadsheetApp.getActiveSheet().getRange('L9').setValue(''); // IMAGE URL 2
- SpreadsheetApp.getActiveSheet().getRange('AH9').setValue(''); // IMAGE 2 WEIGHT
- SpreadsheetApp.getActiveSheet().getRange('L10').setValue(''); // IMAGE URL 3
- SpreadsheetApp.getActiveSheet().getRange('AH10').setValue(''); // IMAGE 3 WEIGHT
- SpreadsheetApp.getActiveSheet().getRange('B13').setValue(''); // DO NOT INCLUDE 1
- SpreadsheetApp.getActiveSheet().getRange('B14').setValue(''); // DO NOT INCLUDE 2
- SpreadsheetApp.getActiveSheet().getRange('B15').setValue(''); // DO NOT INCLUDE 3
+const ClearPrompter = () => {
+    const sheet = SpreadsheetApp.getActiveSheet();
+    const cells_to_clear = [
+        'B5', // MAIN IDEA
+        'AH5', // MAIN IDEA WEIGHT
+        'B8', // SUBJECTS 1
+        'I8', // SUBJECTS 1 WEIGHT
+        'B9', // SUBJECTS 2
+        'I9', // SUBJECTS 2 WEIGHT
+        'B10', // SUBJECTS 3
+        'I10', // SUBJECTS 3 WEIGHT
+        'L8', // IMAGE URL 1
+        'AH8', // IMAGE 1 WEIGHT
+        'L9', // IMAGE URL 2
+        'AH9', // IMAGE 2 WEIGHT
+        'L10', // IMAGE URL 3
+        'AH10', // IMAGE 3 WEIGHT
+        'B13', // DO NOT INCLUDE 1
+        'B14', // DO NOT INCLUDE 2
+        'B15', // DO NOT INCLUDE 3
+        'B17', // STOP
+        'L13', // STYLIZE
+        'L14', // QUALITY
+        'L15', // CHAOS
+        'L16', // SEED
+        'L17', // SAMESEED
+        'B20', // ASPECT RATIO
+        'C21', // ASPECT RATIO CUSTOM
+        'I20', // MEDIUM
+        'J21', // MEDIUM CUSTOM
+        'P20', // CAMERA
+        'Q21', // CAMERA CUSTOM
+        'T22', // CAMERA WEIGHT
+        'W20', // LIGHTING
+        'X21', // LIGHTING CUSTOM
+        'AA22', // LIGHTING WEIGHT
+        'AD20', // COLOR
+        'AE21', // COLOR CUSTOM
+        'AH22', // COLOR WEIGHT
+        'B25', // DESCRIPTOR 1
+        'C26', // DESCRIPTOR 1 CUSTOM
+        'F27', // DESCRIPTOR 1 WEIGHT
+        'I25', // DESCRIPTOR 2
+        'J26', // DESCRIPTOR 2 CUSTOM
+        'M27', // DESCRIPTOR 2 WEIGHT
+        'P25', // ARTIST
+        'Q26', // ARTIST CUSTOM
+        'T27', // ARTIST WEIGHT
+        'W25', // FILM
+        'X26', // FILM CUSTOM
+        'AA27', // FILM WEIGHT
+        'AD25', // VIDEO GAME
+        'AE26', // VIDEO GAME CUSTOM
+        'AH27', // VIDEO GAME WEIGHT
+        'I30', // TEXT
+    ]
 
- SpreadsheetApp.getActiveSheet().getRange('Z13').setValue('FALSE'); // TILE
- SpreadsheetApp.getActiveSheet().getRange('Z14').setValue('FALSE'); // HD
- SpreadsheetApp.getActiveSheet().getRange('Z15').setValue('FALSE'); // UPBETA
- SpreadsheetApp.getActiveSheet().getRange('Z16').setValue('FALSE'); // UPLIGHT
- SpreadsheetApp.getActiveSheet().getRange('Z17').setValue('FALSE'); // VIDEO
+    const cells_set_to_false = [
+        'Z13', // TILE
+        'Z14', // HD
+        'Z15', // UPBETA
+        'Z16', // UPLIGHT
+        'Z17', // VIDEO
+    ];
 
- SpreadsheetApp.getActiveSheet().getRange('B17').setValue(''); // STOP
+    cells_to_clear.map(addr => sheet.getRange(addr).clearContent());
+    cells_set_to_false.map(addr => sheet.getRange(addr).setValue('FALSE'));
 
- SpreadsheetApp.getActiveSheet().getRange('L13').setValue(''); // STYLIZE
- SpreadsheetApp.getActiveSheet().getRange('L14').setValue(''); // QUALITY
- SpreadsheetApp.getActiveSheet().getRange('L15').setValue(''); // CHAOS
- SpreadsheetApp.getActiveSheet().getRange('L16').setValue(''); // SEED
- SpreadsheetApp.getActiveSheet().getRange('L17').setValue(''); // SAMESEED
-
- SpreadsheetApp.getActiveSheet().getRange('B20').setValue(''); // ASPECT RATIO
- SpreadsheetApp.getActiveSheet().getRange('C21').setValue(''); // ASPECT RATIO CUSTOM
- SpreadsheetApp.getActiveSheet().getRange('I20').setValue(''); // MEDIUM
- SpreadsheetApp.getActiveSheet().getRange('J21').setValue(''); // MEDIUM CUSTOM
- SpreadsheetApp.getActiveSheet().getRange('P20').setValue(''); // CAMERA
- SpreadsheetApp.getActiveSheet().getRange('Q21').setValue(''); // CAMERA CUSTOM
- SpreadsheetApp.getActiveSheet().getRange('T22').setValue(''); // CAMERA WEIGHT
- SpreadsheetApp.getActiveSheet().getRange('W20').setValue(''); // LIGHTING
- SpreadsheetApp.getActiveSheet().getRange('X21').setValue(''); // LIGHTING CUSTOM
- SpreadsheetApp.getActiveSheet().getRange('AA22').setValue(''); // LIGHTING WEIGHT
- SpreadsheetApp.getActiveSheet().getRange('AD20').setValue(''); // COLOR
- SpreadsheetApp.getActiveSheet().getRange('AE21').setValue(''); // COLOR CUSTOM
- SpreadsheetApp.getActiveSheet().getRange('AH22').setValue(''); // COLOR WEIGHT
- SpreadsheetApp.getActiveSheet().getRange('B25').setValue(''); // DESCRIPTOR 1
- SpreadsheetApp.getActiveSheet().getRange('C26').setValue(''); // DESCRIPTOR 1 CUSTOM
- SpreadsheetApp.getActiveSheet().getRange('F27').setValue(''); // DESCRIPTOR 1 WEIGHT
- SpreadsheetApp.getActiveSheet().getRange('I25').setValue(''); // DESCRIPTOR 2
- SpreadsheetApp.getActiveSheet().getRange('J26').setValue(''); // DESCRIPTOR 2 CUSTOM
- SpreadsheetApp.getActiveSheet().getRange('M27').setValue(''); // DESCRIPTOR 2 WEIGHT
- SpreadsheetApp.getActiveSheet().getRange('P25').setValue(''); // ARTIST
- SpreadsheetApp.getActiveSheet().getRange('Q26').setValue(''); // ARTIST CUSTOM
- SpreadsheetApp.getActiveSheet().getRange('T27').setValue(''); // ARTIST WEIGHT
- SpreadsheetApp.getActiveSheet().getRange('W25').setValue(''); // FILM
- SpreadsheetApp.getActiveSheet().getRange('X26').setValue(''); // FILM CUSTOM
- SpreadsheetApp.getActiveSheet().getRange('AA27').setValue(''); // FILM WEIGHT
- SpreadsheetApp.getActiveSheet().getRange('AD25').setValue(''); // VIDEO GAME
- SpreadsheetApp.getActiveSheet().getRange('AE26').setValue(''); // VIDEO GAME CUSTOM
- SpreadsheetApp.getActiveSheet().getRange('AH27').setValue(''); // VIDEO GAME WEIGHT
- SpreadsheetApp.getActiveSheet().getRange('B30').setValue('No Preference'); // DEPTH OF FIELD
- SpreadsheetApp.getActiveSheet().getRange('I30').setValue(''); // TEXT
- SpreadsheetApp.getActiveSheet().getRange('W30').setValue('10'); // TEXT WEIGHT
-
- SpreadsheetApp.getActiveSheet().getRange('AX12').setValue('No Clusters'); // CLUSTER
-} 
+    sheet.getRange('B30').setValue('No Preference'); // DEPTH OF FIELD
+    sheet.getRange('W30').setValue('10'); // TEXT WEIGHT
+    sheet.getRange('AX12').setValue('No Clusters'); // CLUSTER
+}
 
 
 
 // THIS CUSTOM FUNCTION LETS YOU CHOOSE MULTIPLE ITEMS IN DROP DOWN MENUS
 function onEdit(e) {
-var oldValue;
-var newValue;
-var ss=SpreadsheetApp.getActiveSpreadsheet();
-var activeCell = ss.getActiveCell();
-if(activeCell.getColumn() == 16 && activeCell.getRow() == 20 && ss.getActiveSheet().getName()=="Prompter") { // CAMERA P20
-newValue=e.value;
-oldValue=e.oldValue;
-if(!e.value) {
-activeCell.setValue("");
-}
-else {
-if (!e.oldValue) {
-activeCell.setValue(newValue);
-}
-else {
-activeCell.setValue(oldValue+', '+newValue);
-}
-}
-}
+    var oldValue;
+    var newValue;
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var activeCell = ss.getActiveCell();
+    if (activeCell.getColumn() == 16 && activeCell.getRow() == 20 && ss.getActiveSheet().getName() == "Prompter") { // CAMERA P20
+        newValue = e.value;
+        oldValue = e.oldValue;
+        if (!e.value) {
+            activeCell.setValue("");
+        }
+        else {
+            if (!e.oldValue) {
+                activeCell.setValue(newValue);
+            }
+            else {
+                activeCell.setValue(oldValue + ', ' + newValue);
+            }
+        }
+    }
 
-if(activeCell.getColumn() == 23 && activeCell.getRow() == 20 && ss.getActiveSheet().getName()=="Prompter") { // LIGHTING W20
-newValue=e.value;
-oldValue=e.oldValue;
-if(!e.value) {
-activeCell.setValue("");
-}
-else {
-if (!e.oldValue) {
-activeCell.setValue(newValue);
-}
-else {
-activeCell.setValue(oldValue+', '+newValue);
-}
-}
-}
+    if (activeCell.getColumn() == 23 && activeCell.getRow() == 20 && ss.getActiveSheet().getName() == "Prompter") { // LIGHTING W20
+        newValue = e.value;
+        oldValue = e.oldValue;
+        if (!e.value) {
+            activeCell.setValue("");
+        }
+        else {
+            if (!e.oldValue) {
+                activeCell.setValue(newValue);
+            }
+            else {
+                activeCell.setValue(oldValue + ', ' + newValue);
+            }
+        }
+    }
 
 
-if(activeCell.getColumn() == 30 && activeCell.getRow() == 20 && ss.getActiveSheet().getName()=="Prompter") { // COLOR AD20
-newValue=e.value;
-oldValue=e.oldValue;
-if(!e.value) {
-activeCell.setValue("");
-}
-else {
-if (!e.oldValue) {
-activeCell.setValue(newValue);
-}
-else {
-activeCell.setValue(oldValue+', '+newValue);
-}
-}
-}
+    if (activeCell.getColumn() == 30 && activeCell.getRow() == 20 && ss.getActiveSheet().getName() == "Prompter") { // COLOR AD20
+        newValue = e.value;
+        oldValue = e.oldValue;
+        if (!e.value) {
+            activeCell.setValue("");
+        }
+        else {
+            if (!e.oldValue) {
+                activeCell.setValue(newValue);
+            }
+            else {
+                activeCell.setValue(oldValue + ', ' + newValue);
+            }
+        }
+    }
 
-if(activeCell.getColumn() == 2 && activeCell.getRow() == 25 && ss.getActiveSheet().getName()=="Prompter") { // DESCRIPTOR1 B25
-newValue=e.value;
-oldValue=e.oldValue;
-if(!e.value) {
-activeCell.setValue("");
-}
-else {
-if (!e.oldValue) {
-activeCell.setValue(newValue);
-}
-else {
-activeCell.setValue(oldValue+', '+newValue);
-}
-}
-}
+    if (activeCell.getColumn() == 2 && activeCell.getRow() == 25 && ss.getActiveSheet().getName() == "Prompter") { // DESCRIPTOR1 B25
+        newValue = e.value;
+        oldValue = e.oldValue;
+        if (!e.value) {
+            activeCell.setValue("");
+        }
+        else {
+            if (!e.oldValue) {
+                activeCell.setValue(newValue);
+            }
+            else {
+                activeCell.setValue(oldValue + ', ' + newValue);
+            }
+        }
+    }
 
-if(activeCell.getColumn() == 9 && activeCell.getRow() == 25 && ss.getActiveSheet().getName()=="Prompter") { // DESCRIPTOR2 I25
-newValue=e.value;
-oldValue=e.oldValue;
-if(!e.value) {
-activeCell.setValue("");
-}
-else {
-if (!e.oldValue) {
-activeCell.setValue(newValue);
-}
-else {
-activeCell.setValue(oldValue+', '+newValue);
-}
-}
-}
+    if (activeCell.getColumn() == 9 && activeCell.getRow() == 25 && ss.getActiveSheet().getName() == "Prompter") { // DESCRIPTOR2 I25
+        newValue = e.value;
+        oldValue = e.oldValue;
+        if (!e.value) {
+            activeCell.setValue("");
+        }
+        else {
+            if (!e.oldValue) {
+                activeCell.setValue(newValue);
+            }
+            else {
+                activeCell.setValue(oldValue + ', ' + newValue);
+            }
+        }
+    }
 
-if(activeCell.getColumn() == 16 && activeCell.getRow() == 25 && ss.getActiveSheet().getName()=="Prompter") { // DESCRIPTOR3 P25
-newValue=e.value;
-oldValue=e.oldValue;
-if(!e.value) {
-activeCell.setValue("");
-}
-else {
-if (!e.oldValue) {
-activeCell.setValue(newValue);
-}
-else {
-activeCell.setValue(oldValue+', '+newValue);
-}
-}
-}
+    if (activeCell.getColumn() == 16 && activeCell.getRow() == 25 && ss.getActiveSheet().getName() == "Prompter") { // DESCRIPTOR3 P25
+        newValue = e.value;
+        oldValue = e.oldValue;
+        if (!e.value) {
+            activeCell.setValue("");
+        }
+        else {
+            if (!e.oldValue) {
+                activeCell.setValue(newValue);
+            }
+            else {
+                activeCell.setValue(oldValue + ', ' + newValue);
+            }
+        }
+    }
 
-if(activeCell.getColumn() == 23 && activeCell.getRow() == 25 && ss.getActiveSheet().getName()=="Prompter") { // ARTIST W25
-newValue=e.value;
-oldValue=e.oldValue;
-if(!e.value) {
-activeCell.setValue("");
-}
-else {
-if (!e.oldValue) {
-activeCell.setValue(newValue);
-}
-else {
-activeCell.setValue(oldValue+', '+newValue);
-}
-}
-}
+    if (activeCell.getColumn() == 23 && activeCell.getRow() == 25 && ss.getActiveSheet().getName() == "Prompter") { // ARTIST W25
+        newValue = e.value;
+        oldValue = e.oldValue;
+        if (!e.value) {
+            activeCell.setValue("");
+        }
+        else {
+            if (!e.oldValue) {
+                activeCell.setValue(newValue);
+            }
+            else {
+                activeCell.setValue(oldValue + ', ' + newValue);
+            }
+        }
+    }
 
-if(activeCell.getColumn() == 30 && activeCell.getRow() == 25 && ss.getActiveSheet().getName()=="Prompter") { // VIDEO AD25
-newValue=e.value;
-oldValue=e.oldValue;
-if(!e.value) {
-activeCell.setValue("");
-}
-else {
-if (!e.oldValue) {
-activeCell.setValue(newValue);
-}
-else {
-activeCell.setValue(oldValue+', '+newValue);
-}
-}
-}
+    if (activeCell.getColumn() == 30 && activeCell.getRow() == 25 && ss.getActiveSheet().getName() == "Prompter") { // VIDEO AD25
+        newValue = e.value;
+        oldValue = e.oldValue;
+        if (!e.value) {
+            activeCell.setValue("");
+        }
+        else {
+            if (!e.oldValue) {
+                activeCell.setValue(newValue);
+            }
+            else {
+                activeCell.setValue(oldValue + ', ' + newValue);
+            }
+        }
+    }
 
 }
-
