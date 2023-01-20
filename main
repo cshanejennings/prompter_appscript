@@ -115,133 +115,80 @@ function onEdit(e) {
     var oldValue;
     var newValue;
     var ss = SpreadsheetApp.getActiveSpreadsheet();
-    var activeCell = ss.getActiveCell();
-    if (activeCell.getColumn() == 16 && activeCell.getRow() == 20 && ss.getActiveSheet().getName() == "Prompter") { // CAMERA P20
-        newValue = e.value;
-        oldValue = e.oldValue;
-        if (!e.value) {
-            activeCell.setValue("");
+    const current_name = ss.getActiveSheet().getName();
+    const activeCell = ss.getActiveCell();
+    const active_row = activeCell.getRow();
+    const active_column = activeCell.getColumn();
+
+    /**
+      Change notes for this section  (you can delete these comments once you're comfortable with the changes, also feel free to ask questions)
+
+      original if statements looked like the following:
+      if (activeCell.getColumn() == 16 && activeCell.getRow() == 20 && ss.getActiveSheet().getName() == "Prompter") { // CAMERA P20
+  
+      since the function now exits if the user isn't on "Prompter"
+      removing && ss.getActiveSheet().getName() == "Prompter" from all if statements 
+  
+      activeCell.getColumn() is now the same as active_column
+  
+      activeCell.getRow() is now the same as active_row
+
+      since there seemed to be 2 rows you were looking for, 20 and 25... I just wrapped the if statements like this
+      if active_row == 20
+        if active_column = 16
+        if active_column = 23
+      if active_row == 25
+        if active_column = 2
+      
+      etc. etc
+    **/
+
+    if (current_name !== "Prompter") return;  // EDIT:  > with this here you don't need to check in every if statement
+    
+    // ({ value, oldValue }) is the same as (e.value, e.oldValue)
+    // this gets the value used in the previous code below
+    // but just returns the value instead of setting it
+    /**
+    newValue = e.value;
+    oldValue = e.oldValue;
+    if (!e.value) {
+        activeCell.setValue("");
+    }
+    else {
+        if (!e.oldValue) {
+            activeCell.setValue(newValue);
         }
         else {
-            if (!e.oldValue) {
-                activeCell.setValue(newValue);
-            }
-            else {
-                activeCell.setValue(oldValue + ', ' + newValue);
-            }
+            activeCell.setValue(oldValue + ', ' + newValue);
         }
     }
-
-    if (activeCell.getColumn() == 23 && activeCell.getRow() == 20 && ss.getActiveSheet().getName() == "Prompter") { // LIGHTING W20
-        newValue = e.value;
-        oldValue = e.oldValue;
-        if (!e.value) {
-            activeCell.setValue("");
-        }
-        else {
-            if (!e.oldValue) {
-                activeCell.setValue(newValue);
-            }
-            else {
-                activeCell.setValue(oldValue + ', ' + newValue);
-            }
-        }
+    */
+    // and is just a way to make the code a little more readable
+    const get_new_value = ({ value, oldValue }) => {
+        if (!value) return "";
+        if (!oldValue) return value;
+        return `${oldValue}, ${value}`;
     }
 
-
-    if (activeCell.getColumn() == 30 && activeCell.getRow() == 20 && ss.getActiveSheet().getName() == "Prompter") { // COLOR AD20
-        newValue = e.value;
-        oldValue = e.oldValue;
-        if (!e.value) {
-            activeCell.setValue("");
-        }
-        else {
-            if (!e.oldValue) {
-                activeCell.setValue(newValue);
-            }
-            else {
-                activeCell.setValue(oldValue + ', ' + newValue);
-            }
-        }
-    }
-
-    if (activeCell.getColumn() == 2 && activeCell.getRow() == 25 && ss.getActiveSheet().getName() == "Prompter") { // DESCRIPTOR1 B25
-        newValue = e.value;
-        oldValue = e.oldValue;
-        if (!e.value) {
-            activeCell.setValue("");
-        }
-        else {
-            if (!e.oldValue) {
-                activeCell.setValue(newValue);
-            }
-            else {
-                activeCell.setValue(oldValue + ', ' + newValue);
-            }
-        }
-    }
-
-    if (activeCell.getColumn() == 9 && activeCell.getRow() == 25 && ss.getActiveSheet().getName() == "Prompter") { // DESCRIPTOR2 I25
-        newValue = e.value;
-        oldValue = e.oldValue;
-        if (!e.value) {
-            activeCell.setValue("");
-        }
-        else {
-            if (!e.oldValue) {
-                activeCell.setValue(newValue);
-            }
-            else {
-                activeCell.setValue(oldValue + ', ' + newValue);
-            }
-        }
-    }
-
-    if (activeCell.getColumn() == 16 && activeCell.getRow() == 25 && ss.getActiveSheet().getName() == "Prompter") { // DESCRIPTOR3 P25
-        newValue = e.value;
-        oldValue = e.oldValue;
-        if (!e.value) {
-            activeCell.setValue("");
-        }
-        else {
-            if (!e.oldValue) {
-                activeCell.setValue(newValue);
-            }
-            else {
-                activeCell.setValue(oldValue + ', ' + newValue);
-            }
-        }
-    }
-
-    if (activeCell.getColumn() == 23 && activeCell.getRow() == 25 && ss.getActiveSheet().getName() == "Prompter") { // ARTIST W25
-        newValue = e.value;
-        oldValue = e.oldValue;
-        if (!e.value) {
-            activeCell.setValue("");
-        }
-        else {
-            if (!e.oldValue) {
-                activeCell.setValue(newValue);
-            }
-            else {
-                activeCell.setValue(oldValue + ', ' + newValue);
-            }
-        }
-    }
-
-    if (activeCell.getColumn() == 30 && activeCell.getRow() == 25 && ss.getActiveSheet().getName() == "Prompter") { // VIDEO AD25
-        newValue = e.value;
-        oldValue = e.oldValue;
-        if (!e.value) {
-            activeCell.setValue("");
-        }
-        else {
-            if (!e.oldValue) {
-                activeCell.setValue(newValue);
-            }
-            else {
-                activeCell.setValue(oldValue + ', ' + newValue);
-            }
+    if (active_row === 20) {
+      if (active_column == 16) { // CAMERA P20
+        activeCell.setValue(get_new_value(e));
+      } else if (active_column == 23) { // LIGHTING W20
+        activeCell.setValue(get_new_value(e));
+      } else if (active_column == 30) { // COLOR AD20
+        activeCell.setValue(get_new_value(e));
+      }
+    } else if (active_row == 25) {
+        if(activeColumn = 2) { // DESCRIPTOR1 B25
+            activeCell.setValue(get_new_value(e));
+        } else if (active_column == 9) { // DESCRIPTOR2 I25
+            activeCell.setValue(get_new_value(e));
+        } else if (active_column == 16) { // ARTIST P25 
+            activeCell.setValue(get_new_value(e));
+        } else if (active_column == 23) { // FILM W25
+            activeCell.setValue(get_new_value(e));
+        } else if (active_column == 30) { // VIDEO GAME AD25
+            activeCell.setValue(get_new_value(e));
         }
     }
 
