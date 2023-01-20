@@ -106,15 +106,20 @@ const onEdit = (edit_event) => {
     if (active_name !== "Prompter") return;
     
     const get_new_value = ({ value, oldValue }) => {
-        if (!value) return "";
-        if (!oldValue) return value;
-        return `${oldValue}, ${value}`;
+      // added this line to prevent section headers from being selected as options
+      if(value.match(/[→█▬►]+/)?.length > 0) return oldValue;
+      if (!value) return "";
+      if (!oldValue) return value;
+      return `${oldValue}, ${value}`;
     }
     
     // get the A1 address of the cell that was edited
     const edited_cell_address = edit_event.range.getA1Notation();
     
+    //  FOUND A BUG, DOESN'T WORK, FIXING NOW, will remove this comment when done
+
     // get the A1 address of the cell that was edited
+    
     switch (edited_cell_address) {
         case'P20':// CAMERA
         case'W20':// LIGHTING
@@ -126,7 +131,7 @@ const onEdit = (edit_event) => {
         case'AD25':// VIDEO GAME
             active_sheet
                 .getRange(edited_cell_address)
-                .setValue(get_new_value(e));
+                .setValue(get_new_value(edit_event));
             break;
         default:
     }
