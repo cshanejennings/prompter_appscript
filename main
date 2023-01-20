@@ -14,24 +14,14 @@ const _sheet = (name) => active_worksheet.getSheetByName(name);
 // THIS CUSTOM BUTTON FUNCTION CREATES A NEW ROW IN "MY PROMPTS" THEN COPIES THE CURRENT PROMPT TO IT WITH DATE AND TIME
 function SaveMyPrompt() {
     const my_prompts = _sheet("Prompter");
-    var inputRange = my_prompts.getRange("B33");
-    var inputValue = inputRange.getValue();
-    var last = my_prompts.getLastRow();
-    var outputRange = my_prompts.getRange(last + 1, 2, 1, 2);
-    outputRange.setValues([[Utilities.formatDate(new Date(), Session.getTimeZone(), 'yyyy-MM-dd HH:mm'), inputValue]]);
-}
-
-
-const clear_prompt_alternate = () => {
-    const sheet = SpreadsheetApp.getActiveSheet();
-    const cells_to_clear = 'B5,AH5,B8,I8,B9,I9,B10,I10,L8,AH8,L9,AH9,L10,AH10,B13,B14,B15,B17,L13,L14,L15,L16,L17,B20,C21,I20,J21,P20,Q21,T22,W20,X21,AA22,AD20,AE21,AH22,B25,C26,F27,I25,J26,M27,P25,Q26,T27,W25,X26,AA27,AD25,AE26,AH27'.split(',');
-    const cells_set_to_false = 'Z13,Z14,Z15,Z16,Z17'.split(',');
-
-    cells_to_clear.map(addr => sheet.getRange(addr).clearContent());
-    cells_set_to_false.map(addr = sheet.getRange(addr).setValue('FALSE'));
-    sheet.getRange('B30').setValue('No Preference'); // DEPTH OF FIELD
-    sheet.getRange('W30').setValue('10'); // TEXT WEIGHT
-    sheet.getRange('AX12').setValue('No Clusters'); // CLUSTER
+    const prompt = my_prompts.getRange("B33").getValue();
+    const last_row = my_prompts.getLastRow();
+    my_prompts
+        .getRange(last_row + 1, 2, 1, 2)
+        .setValues([[
+            Utilities.formatDate(new Date(), Session.getTimeZone(), 'yyyy-MM-dd HH:mm'),
+            prompt
+        ]]);
 }
 
 // THIS CUSTOM BUTTON FUNCTION SIMPLY CLEARS ALL THE INPUT FIELDS SO YOU CAN START EMPTY
@@ -108,47 +98,36 @@ const ClearPrompter = () => {
     sheet.getRange('AX12').setValue('No Clusters'); // CLUSTER
 }
 
-
-
 // THIS CUSTOM FUNCTION LETS YOU CHOOSE MULTIPLE ITEMS IN DROP DOWN MENUS
-const onEdit = (e) => {
-    
-    const ss = SpreadsheetApp.getActiveSpreadsheet();
-    
-    const current_name = ss.getActiveSheet().getName();
-    const activeCell = ss.getActiveCell();
-    const active_row = activeCell.getRow();
-    const active_column = activeCell.getColumn();
-
+const onEdit = (edit_event) => {
+    const active_sheet = SpreadsheetApp.getActiveSheet();
+    const active_name = active_sheet.getName();
     // exits if not on the prompter sheet
-    if (current_name !== "Prompter") return;
+    if (active_name !== "Prompter") return;
     
     const get_new_value = ({ value, oldValue }) => {
         if (!value) return "";
         if (!oldValue) return value;
         return `${oldValue}, ${value}`;
     }
-
-    if (active_row === 20) {
-      if (active_column == 16) { // CAMERA P20
-        activeCell.setValue(get_new_value(e));
-      } else if (active_column == 23) { // LIGHTING W20
-        activeCell.setValue(get_new_value(e));
-      } else if (active_column == 30) { // COLOR AD20
-        activeCell.setValue(get_new_value(e));
-      }
-    } else if (active_row == 25) {
-        if(activeColumn = 2) { // DESCRIPTOR1 B25
-            activeCell.setValue(get_new_value(e));
-        } else if (active_column == 9) { // DESCRIPTOR2 I25
-            activeCell.setValue(get_new_value(e));
-        } else if (active_column == 16) { // ARTIST P25 
-            activeCell.setValue(get_new_value(e));
-        } else if (active_column == 23) { // FILM W25
-            activeCell.setValue(get_new_value(e));
-        } else if (active_column == 30) { // VIDEO GAME AD25
-            activeCell.setValue(get_new_value(e));
-        }
+    
+    // get the A1 address of the cell that was edited
+    const edited_cell_address = edit_event.range.getA1Notation();
+    
+    // get the A1 address of the cell that was edited
+    switch (edited_cell_address) {
+        case'P20':// CAMERA
+        case'W20':// LIGHTING
+        case'AD20':// COLOR
+        case'B25':// DESCRIPTOR1
+        case'I25':// DESCRIPTOR2
+        case'P25 ':// ARTIST
+        case'W25':// FILM
+        case'AD25':// VIDEO GAME
+            active_sheet
+                .getRange(edited_cell_address)
+                .setValue(get_new_value(e));
+            break;
+        default:
     }
-
 }
