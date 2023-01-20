@@ -1,0 +1,233 @@
+// PROMPTER CUSTOM SCRIPTS
+//
+// CREATED BY SHANE MCGEEHAN, THE COOLEST DUDE EVER
+// FOR PROMPT WRITING IN MIDJOURNEY, THE COOLEST AI EVER
+// CONTACT ME AT SHANE@THEDREAMINGSTATE.COM WITH QUESTIONS
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 2022-09-20 (Details in the code below, simple scripts for SAVE and CLEAR buttons, and multiple selections) //
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+// THIS CUSTOM BUTTON FUNCTION CREATES A NEW ROW IN "MY PROMPTS" THEN COPIES THE CURRENT PROMPT TO IT WITH DATE AND TIME
+function SaveMyPrompt() {
+  var inputRange = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Prompter").getRange("B33");
+  var inputValue = inputRange.getValue();
+  var last = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("MyPrompts").getLastRow();
+  var outputRange = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("MyPrompts").getRange(last+1,2,1,2);
+  outputRange.setValues([[Utilities.formatDate(new Date(), Session.getTimeZone(), 'yyyy-MM-dd HH:mm'),inputValue]]); 
+}
+
+
+
+// THIS CUSTOM BUTTON FUNCTION SIMPLY CLEARS ALL THE INPUT FIELDS SO YOU CAN START EMPTY
+function ClearPrompter() {
+ var sheet = SpreadsheetApp.getActiveSheet();
+ SpreadsheetApp.getActiveSheet().getRange('B5').setValue(''); // MAIN IDEA
+ SpreadsheetApp.getActiveSheet().getRange('AH5').setValue(''); // MAIN IDEA WEIGHT
+ SpreadsheetApp.getActiveSheet().getRange('B8').setValue(''); // SUBJECTS 1
+ SpreadsheetApp.getActiveSheet().getRange('I8').setValue(''); // SUBJECTS 1 WEIGHT
+ SpreadsheetApp.getActiveSheet().getRange('B9').setValue(''); // SUBJECTS 2
+ SpreadsheetApp.getActiveSheet().getRange('I9').setValue(''); // SUBJECTS 2 WEIGHT
+ SpreadsheetApp.getActiveSheet().getRange('B10').setValue(''); // SUBJECTS 3
+ SpreadsheetApp.getActiveSheet().getRange('I10').setValue(''); // SUBJECTS 3 WEIGHT
+ SpreadsheetApp.getActiveSheet().getRange('L8').setValue(''); // IMAGE URL 1
+ SpreadsheetApp.getActiveSheet().getRange('AH8').setValue(''); // IMAGE 1 WEIGHT
+ SpreadsheetApp.getActiveSheet().getRange('L9').setValue(''); // IMAGE URL 2
+ SpreadsheetApp.getActiveSheet().getRange('AH9').setValue(''); // IMAGE 2 WEIGHT
+ SpreadsheetApp.getActiveSheet().getRange('L10').setValue(''); // IMAGE URL 3
+ SpreadsheetApp.getActiveSheet().getRange('AH10').setValue(''); // IMAGE 3 WEIGHT
+ SpreadsheetApp.getActiveSheet().getRange('B13').setValue(''); // DO NOT INCLUDE 1
+ SpreadsheetApp.getActiveSheet().getRange('B14').setValue(''); // DO NOT INCLUDE 2
+ SpreadsheetApp.getActiveSheet().getRange('B15').setValue(''); // DO NOT INCLUDE 3
+
+ SpreadsheetApp.getActiveSheet().getRange('Z13').setValue('FALSE'); // TILE
+ SpreadsheetApp.getActiveSheet().getRange('Z14').setValue('FALSE'); // HD
+ SpreadsheetApp.getActiveSheet().getRange('Z15').setValue('FALSE'); // UPBETA
+ SpreadsheetApp.getActiveSheet().getRange('Z16').setValue('FALSE'); // UPLIGHT
+ SpreadsheetApp.getActiveSheet().getRange('Z17').setValue('FALSE'); // VIDEO
+
+ SpreadsheetApp.getActiveSheet().getRange('B17').setValue(''); // STOP
+
+ SpreadsheetApp.getActiveSheet().getRange('L13').setValue(''); // STYLIZE
+ SpreadsheetApp.getActiveSheet().getRange('L14').setValue(''); // QUALITY
+ SpreadsheetApp.getActiveSheet().getRange('L15').setValue(''); // CHAOS
+ SpreadsheetApp.getActiveSheet().getRange('L16').setValue(''); // SEED
+ SpreadsheetApp.getActiveSheet().getRange('L17').setValue(''); // SAMESEED
+
+ SpreadsheetApp.getActiveSheet().getRange('B20').setValue(''); // ASPECT RATIO
+ SpreadsheetApp.getActiveSheet().getRange('C21').setValue(''); // ASPECT RATIO CUSTOM
+ SpreadsheetApp.getActiveSheet().getRange('I20').setValue(''); // MEDIUM
+ SpreadsheetApp.getActiveSheet().getRange('J21').setValue(''); // MEDIUM CUSTOM
+ SpreadsheetApp.getActiveSheet().getRange('P20').setValue(''); // CAMERA
+ SpreadsheetApp.getActiveSheet().getRange('Q21').setValue(''); // CAMERA CUSTOM
+ SpreadsheetApp.getActiveSheet().getRange('T22').setValue(''); // CAMERA WEIGHT
+ SpreadsheetApp.getActiveSheet().getRange('W20').setValue(''); // LIGHTING
+ SpreadsheetApp.getActiveSheet().getRange('X21').setValue(''); // LIGHTING CUSTOM
+ SpreadsheetApp.getActiveSheet().getRange('AA22').setValue(''); // LIGHTING WEIGHT
+ SpreadsheetApp.getActiveSheet().getRange('AD20').setValue(''); // COLOR
+ SpreadsheetApp.getActiveSheet().getRange('AE21').setValue(''); // COLOR CUSTOM
+ SpreadsheetApp.getActiveSheet().getRange('AH22').setValue(''); // COLOR WEIGHT
+ SpreadsheetApp.getActiveSheet().getRange('B25').setValue(''); // DESCRIPTOR 1
+ SpreadsheetApp.getActiveSheet().getRange('C26').setValue(''); // DESCRIPTOR 1 CUSTOM
+ SpreadsheetApp.getActiveSheet().getRange('F27').setValue(''); // DESCRIPTOR 1 WEIGHT
+ SpreadsheetApp.getActiveSheet().getRange('I25').setValue(''); // DESCRIPTOR 2
+ SpreadsheetApp.getActiveSheet().getRange('J26').setValue(''); // DESCRIPTOR 2 CUSTOM
+ SpreadsheetApp.getActiveSheet().getRange('M27').setValue(''); // DESCRIPTOR 2 WEIGHT
+ SpreadsheetApp.getActiveSheet().getRange('P25').setValue(''); // ARTIST
+ SpreadsheetApp.getActiveSheet().getRange('Q26').setValue(''); // ARTIST CUSTOM
+ SpreadsheetApp.getActiveSheet().getRange('T27').setValue(''); // ARTIST WEIGHT
+ SpreadsheetApp.getActiveSheet().getRange('W25').setValue(''); // FILM
+ SpreadsheetApp.getActiveSheet().getRange('X26').setValue(''); // FILM CUSTOM
+ SpreadsheetApp.getActiveSheet().getRange('AA27').setValue(''); // FILM WEIGHT
+ SpreadsheetApp.getActiveSheet().getRange('AD25').setValue(''); // VIDEO GAME
+ SpreadsheetApp.getActiveSheet().getRange('AE26').setValue(''); // VIDEO GAME CUSTOM
+ SpreadsheetApp.getActiveSheet().getRange('AH27').setValue(''); // VIDEO GAME WEIGHT
+ SpreadsheetApp.getActiveSheet().getRange('B30').setValue('No Preference'); // DEPTH OF FIELD
+ SpreadsheetApp.getActiveSheet().getRange('I30').setValue(''); // TEXT
+ SpreadsheetApp.getActiveSheet().getRange('W30').setValue('10'); // TEXT WEIGHT
+
+ SpreadsheetApp.getActiveSheet().getRange('AX12').setValue('No Clusters'); // CLUSTER
+} 
+
+
+
+// THIS CUSTOM FUNCTION LETS YOU CHOOSE MULTIPLE ITEMS IN DROP DOWN MENUS
+function onEdit(e) {
+var oldValue;
+var newValue;
+var ss=SpreadsheetApp.getActiveSpreadsheet();
+var activeCell = ss.getActiveCell();
+if(activeCell.getColumn() == 16 && activeCell.getRow() == 20 && ss.getActiveSheet().getName()=="Prompter") { // CAMERA P20
+newValue=e.value;
+oldValue=e.oldValue;
+if(!e.value) {
+activeCell.setValue("");
+}
+else {
+if (!e.oldValue) {
+activeCell.setValue(newValue);
+}
+else {
+activeCell.setValue(oldValue+', '+newValue);
+}
+}
+}
+
+if(activeCell.getColumn() == 23 && activeCell.getRow() == 20 && ss.getActiveSheet().getName()=="Prompter") { // LIGHTING W20
+newValue=e.value;
+oldValue=e.oldValue;
+if(!e.value) {
+activeCell.setValue("");
+}
+else {
+if (!e.oldValue) {
+activeCell.setValue(newValue);
+}
+else {
+activeCell.setValue(oldValue+', '+newValue);
+}
+}
+}
+
+
+if(activeCell.getColumn() == 30 && activeCell.getRow() == 20 && ss.getActiveSheet().getName()=="Prompter") { // COLOR AD20
+newValue=e.value;
+oldValue=e.oldValue;
+if(!e.value) {
+activeCell.setValue("");
+}
+else {
+if (!e.oldValue) {
+activeCell.setValue(newValue);
+}
+else {
+activeCell.setValue(oldValue+', '+newValue);
+}
+}
+}
+
+if(activeCell.getColumn() == 2 && activeCell.getRow() == 25 && ss.getActiveSheet().getName()=="Prompter") { // DESCRIPTOR1 B25
+newValue=e.value;
+oldValue=e.oldValue;
+if(!e.value) {
+activeCell.setValue("");
+}
+else {
+if (!e.oldValue) {
+activeCell.setValue(newValue);
+}
+else {
+activeCell.setValue(oldValue+', '+newValue);
+}
+}
+}
+
+if(activeCell.getColumn() == 9 && activeCell.getRow() == 25 && ss.getActiveSheet().getName()=="Prompter") { // DESCRIPTOR2 I25
+newValue=e.value;
+oldValue=e.oldValue;
+if(!e.value) {
+activeCell.setValue("");
+}
+else {
+if (!e.oldValue) {
+activeCell.setValue(newValue);
+}
+else {
+activeCell.setValue(oldValue+', '+newValue);
+}
+}
+}
+
+if(activeCell.getColumn() == 16 && activeCell.getRow() == 25 && ss.getActiveSheet().getName()=="Prompter") { // DESCRIPTOR3 P25
+newValue=e.value;
+oldValue=e.oldValue;
+if(!e.value) {
+activeCell.setValue("");
+}
+else {
+if (!e.oldValue) {
+activeCell.setValue(newValue);
+}
+else {
+activeCell.setValue(oldValue+', '+newValue);
+}
+}
+}
+
+if(activeCell.getColumn() == 23 && activeCell.getRow() == 25 && ss.getActiveSheet().getName()=="Prompter") { // ARTIST W25
+newValue=e.value;
+oldValue=e.oldValue;
+if(!e.value) {
+activeCell.setValue("");
+}
+else {
+if (!e.oldValue) {
+activeCell.setValue(newValue);
+}
+else {
+activeCell.setValue(oldValue+', '+newValue);
+}
+}
+}
+
+if(activeCell.getColumn() == 30 && activeCell.getRow() == 25 && ss.getActiveSheet().getName()=="Prompter") { // VIDEO AD25
+newValue=e.value;
+oldValue=e.oldValue;
+if(!e.value) {
+activeCell.setValue("");
+}
+else {
+if (!e.oldValue) {
+activeCell.setValue(newValue);
+}
+else {
+activeCell.setValue(oldValue+', '+newValue);
+}
+}
+}
+
+}
+
